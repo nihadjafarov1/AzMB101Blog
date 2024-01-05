@@ -17,7 +17,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
     public DbSet<T> Table => _context.Set<T>();
 
-    public IQueryable<T> GetAll(bool noTracking = true)
+    public IEnumerable<T> GetAll(bool noTracking = true)
         => noTracking ? Table.AsNoTracking() : Table;
 
     public async Task<bool> IsExistAsync(Expression<Func<T, bool>> expression)

@@ -29,6 +29,16 @@ namespace Twitter.Business.Dtos.AuthDtos
                 .NotNull()
                 .MinimumLength(2)
                 .MaximumLength(25);
+            RuleFor(x => x.Username)
+            .NotEmpty()
+            .NotNull()
+            .Matches(@"^[^@\s] +@[^@\s] +\.(com | net | org | gov | ru)$");
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .NotNull()
+                .Matches(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{4,}$");
+            RuleFor(x => x.BirthDate.Year)
+                .LessThan(DateTime.Now.Year - 13);
         }
     }
 }
