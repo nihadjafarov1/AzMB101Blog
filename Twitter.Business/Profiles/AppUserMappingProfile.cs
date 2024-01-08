@@ -1,0 +1,20 @@
+﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Twitter.Business.Dtos.AuthDtos;
+using Twitter.Core.Entities;
+
+namespace Twitter.Business.Profiles
+{
+    public class AppUserMappingProfile : Profile
+    {
+        protected AppUserMappingProfile()
+        {
+            CreateMap<RegisterDto, AppUser>();
+        }
+
+    }
+}
