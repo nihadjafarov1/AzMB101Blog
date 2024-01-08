@@ -20,5 +20,10 @@ namespace Twitter.API.Controllers
             await _userService.CreateAsync(dto);
             return Ok();
         }
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(_userService.GetAll());
+        }
     }
 }

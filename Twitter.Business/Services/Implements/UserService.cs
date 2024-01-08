@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twitter.Business.Dtos.AuthDtos;
+using Twitter.Business.Dtos.TopicDtos;
 using Twitter.Business.Exceptions.AppUser;
 using Twitter.Business.Services.Interfaces;
 using Twitter.Core.Entities;
@@ -35,5 +36,7 @@ namespace Twitter.Business.Services.Implements
                 throw new AppUserCreatedFailedException(sb.ToString());
             }
         }
+        IEnumerable<UserListItemDto> IUserService.GetAll()
+            => _mapper.Map<IEnumerable<UserListItemDto>>(_userManager.Users);
     }
 }

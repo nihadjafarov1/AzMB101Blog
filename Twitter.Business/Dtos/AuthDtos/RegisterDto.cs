@@ -30,9 +30,9 @@ namespace Twitter.Business.Dtos.AuthDtos
                 .MinimumLength(2)
                 .MaximumLength(25);
             RuleFor(x => x.Email)
-            .NotEmpty()
-            .NotNull()
-            .Matches(@"^[^@\s] +@[^@\s] +\.(com | net | org | gov | ru)$");
+                .NotEmpty()
+                .NotNull()
+                .Matches(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .NotNull()

@@ -11,10 +11,10 @@ namespace Twitter.Business.Profiles
 {
     public class AppUserMappingProfile : Profile
     {
-        protected AppUserMappingProfile()
+        public AppUserMappingProfile()
         {
             CreateMap<RegisterDto, AppUser>();
+            CreateMap<AppUser, UserListItemDto>();
         }
-
     }
 }
