@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Twitter.DAL.Contexts;
-using Twitter.Business;
-using Twitter.Core.Entities;
-using Microsoft.AspNetCore.Identity;
 using Twitter.API;
+using Twitter.Business;
+using Twitter.DAL.Contexts;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 builder.Services.AddDbContext<TwitterContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MSSql"));
@@ -24,22 +50,25 @@ builder.Services.AddUserIdentity();
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddBusinessLayer();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(opt =>
-    {
-        opt.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            opt.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
 
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = "https://localhost:7297/",
-            ValidAudience = "https://localhost:7297/api",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("345f33d3-7d79-4002-a95e-a1b497d8b4f7")),
-        };
-    });
+                ValidIssuer = builder.Configuration.GetSection("Jwt")["Issuer"],
+                ValidAudience = builder.Configuration.GetSection("Jwt")["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Jwt")["Key"])),
+                LifetimeValidator = (nb, exp, token, _) => token != null ? exp >= DateTime.UtcNow && nb <= DateTime.UtcNow : false
+            };
+        });
 
 var app = builder.Build();
 
