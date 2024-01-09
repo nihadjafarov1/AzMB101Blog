@@ -4,6 +4,9 @@ using Twitter.Business;
 using Twitter.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Twitter.API;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,22 @@ builder.Services.AddUserIdentity();
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddBusinessLayer();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = "https://localhost:7297/",
+            ValidAudience = "https://localhost:7297/api",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("345f33d3-7d79-4002-a95e-a1b497d8b4f7")),
+        };
+    });
 
 var app = builder.Build();
 
@@ -33,6 +52,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
