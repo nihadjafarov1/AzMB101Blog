@@ -6,6 +6,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Twitter.Core.Entities;
+using Twitter.Core.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +83,53 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.Use(async (context, next) =>
+{
+    using (var scope = context.RequestServices.CreateScope())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+        if (!await roleManager.Roles.AnyAsync())
+        {
+            foreach (var role in Enum.GetNames(typeof(Roles)))
+            {
+                var result = await roleManager.CreateAsync(new IdentityRole(role));
+                if (!result.Succeeded)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var error in result.Errors)
+                    {
+                        sb.Append(error.Description + " ");
+                    }
+                    throw new Exception(sb.ToString().TrimEnd());
+                }
+            }
+        }
+        if (await userManager.FindByNameAsync(app.Configuration.GetSection("Admin")["Username"]) == null)
+        {
+            var user = new AppUser
+            {
+                UserName = app.Configuration.GetSection("Admin")["Username"],
+                Email = "admin@gmail.com",
+                Name = "admin",
+                Surname = "admin"
+            }; 
+            var result = await userManager.CreateAsync(user, app.Configuration.GetSection("Admin")["Password"]);
+            if (!result.Succeeded)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var error in result.Errors)
+                {
+                    sb.Append(error.Description + " ");
+                }
+                throw new Exception(sb.ToString().TrimEnd());
+            }
+            await userManager.AddToRoleAsync(user, nameof(Roles.Admin));
+        }
+    }
+    await next();
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
