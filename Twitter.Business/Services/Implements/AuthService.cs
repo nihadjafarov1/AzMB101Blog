@@ -39,8 +39,12 @@ namespace Twitter.Business.Services.Implements
             {
                 throw new UsernameOrPasswordWrongException();
             }
-
-            return _tokenService.CreateToken(user);
+            string role = (await _userManager.GetRolesAsync(user)).First();
+            return _tokenService.CreateToken(new TokenParamsDto
+            {
+                Role = role,
+                User = user
+            });
         }
     }
 }
