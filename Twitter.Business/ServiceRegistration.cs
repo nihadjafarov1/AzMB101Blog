@@ -32,6 +32,7 @@ namespace Twitter.Business
         {
             services.AddFluentValidation(x=>x.RegisterValidatorsFromAssemblyContaining<TopicCreateDtoValidator>());
             services.AddAutoMapper(typeof(TopicMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(PostMappingProfile).Assembly);
             return services;
         }
     }

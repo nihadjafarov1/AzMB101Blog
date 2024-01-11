@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Business.Dtos.AppUserDtos;
 using Twitter.Business.Dtos.AuthDtos;
 using Twitter.Core.Entities;
 
@@ -15,6 +16,7 @@ namespace Twitter.Business.Profiles
         {
             CreateMap<RegisterDto, AppUser>();
             CreateMap<AppUser, UserListItemDto>();
+            CreateMap<AppUser, AppUserInPostItemDto>();
         }
     }
 }
