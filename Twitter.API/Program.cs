@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(opt =>
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-
+    
     opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -54,7 +54,6 @@ builder.Services.AddBusinessLayer();
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddJwtBearer(opt =>
@@ -80,9 +79,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSeedData();
+    //app.UseSeedData();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(opt =>
+    {
+        opt.ConfigObject.PersistAuthorization = true;
+    });
 }
 
 app.UseHttpsRedirection();

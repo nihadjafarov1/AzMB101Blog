@@ -17,8 +17,18 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
     public DbSet<T> Table => _context.Set<T>();
 
-    public IEnumerable<T> GetAll(bool noTracking = true)
-        => noTracking ? Table.AsNoTracking() : Table;
+    public IQueryable<T> GetAll(bool noTracking = true, params string[] include)
+    {
+        var query = Table.AsQueryable();
+        if (include != null && include.Length > 0)
+        {
+            foreach (var item in include)
+            {
+                query = query.Include(item);
+            }
+        }
+        return noTracking ? query.AsNoTracking() : query;
+    }
 
     public async Task<bool> IsExistAsync(Expression<Func<T, bool>> expression)
     {
@@ -35,9 +45,17 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         await _context.SaveChangesAsync();
     }
 
-    public async Task<T> GetByIdAsync(int id, bool noTracking = true)
+    public async Task<T> GetByIdAsync(int id, bool noTracking = true, params string[] include)
     {
-        return noTracking ? await Table.AsNoTracking().SingleOrDefaultAsync(t=> t.Id == id) : await Table.FindAsync(id);
+        var query = Table.AsQueryable();
+        if (include != null && include.Length > 0)
+        {
+            foreach (var item in include)
+            {
+                query = query.Include(item);
+            }
+        }
+        return noTracking ? await query.AsNoTracking().SingleOrDefaultAsync(t=> t.Id == id) : await query.SingleOrDefaultAsync(t => t.Id == id);
     }
 
     public void Remove(T data)

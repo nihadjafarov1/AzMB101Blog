@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Twitter.Business.Dtos.PostDtos;
 using Twitter.Business.Dtos.TopicDtos;
@@ -38,7 +39,7 @@ namespace Twitter.Business.Services.Implements
         }
         public IEnumerable<PostListItemDto> GetAll()
         {
-            var data = _repo.GetAll();
+            var data = _repo.GetAll(true,"AppUser");
             return _mapper.Map<IEnumerable<PostListItemDto>>(data);
         }
 
