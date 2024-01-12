@@ -13,5 +13,6 @@ namespace Twitter.Core.Entities
         public string Surname { get; set; }
         public DateTime BirthDay { get; set; }
         public IEnumerable<Post> Posts { get; set; }
+        public List<Comment>? Comments { get; set; }
     }
 }
