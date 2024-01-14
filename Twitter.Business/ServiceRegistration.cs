@@ -17,6 +17,7 @@ namespace Twitter.Business
         {
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
             return services;
         }
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -26,13 +27,13 @@ namespace Twitter.Business
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<ICommentService, CommentService>();
             return services;
         }
         public static IServiceCollection AddBusinessLayer(this IServiceCollection services)
         {
             services.AddFluentValidation(x=>x.RegisterValidatorsFromAssemblyContaining<TopicCreateDtoValidator>());
             services.AddAutoMapper(typeof(TopicMappingProfile).Assembly);
-            services.AddAutoMapper(typeof(PostMappingProfile).Assembly);
             return services;
         }
     }

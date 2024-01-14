@@ -86,7 +86,6 @@ if (app.Environment.IsDevelopment())
         opt.ConfigObject.PersistAuthorization = true;
     });
 }
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

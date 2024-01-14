@@ -5,7 +5,7 @@ namespace Twitter.Business.Services.Interfaces
 {
     public interface ICommentService
     {
-        public Task Create(CommentCreateDto dto);
+        public Task CreateAsync(CommentCreateDto dto);
         public IEnumerable<CommentListItemDto> Get();
         public Task Delete();
 

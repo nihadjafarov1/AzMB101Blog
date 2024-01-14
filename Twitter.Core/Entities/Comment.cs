@@ -10,5 +10,6 @@
         public int? ParentCommentId { get; set; }
         public Comment? ParentComment { get; set; }
         public List<Comment>? ChildComments { get; set; }
+        public List<ReactionType>? ReactionTypes { get; set; }
     }
 }

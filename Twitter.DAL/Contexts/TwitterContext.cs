@@ -9,9 +9,7 @@ namespace Twitter.DAL.Contexts
 {
     public class TwitterContext : IdentityDbContext<AppUser>
     {
-        public TwitterContext(DbContextOptions options) : base(options)
-        {
-        }
+        public TwitterContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Topic> Topics { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }

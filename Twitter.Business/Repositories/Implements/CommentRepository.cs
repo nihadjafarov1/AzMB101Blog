@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using Twitter.Business.Repositories.Interfaces;
+﻿using Twitter.Business.Repositories.Interfaces;
 using Twitter.Core.Entities;
 using Twitter.DAL.Contexts;
 

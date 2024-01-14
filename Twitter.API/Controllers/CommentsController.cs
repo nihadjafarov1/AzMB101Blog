@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Twitter.Business.Dtos.CommentDtos;
 using Twitter.Business.Services.Interfaces;
 
 namespace Twitter.API.Controllers
@@ -19,6 +20,12 @@ namespace Twitter.API.Controllers
         public IActionResult Get()
         {
             return Ok(_service.Get());
+        }
+        [HttpPost]
+        public async Task<IActionResult> Post(CommentCreateDto dto)
+        {
+            await _service.CreateAsync(dto);
+            return Ok(dto);
         }
     }
 }
